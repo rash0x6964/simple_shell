@@ -82,7 +82,7 @@ char **prompt(t_env **my_env, int status)
  * @env: env
  * Return: Nothing
  */
-void run(char *executable, t_shell *holder, char **env)
+void run(t_shell *holder, char **env)
 {
 	int pid;
 
@@ -94,12 +94,14 @@ void run(char *executable, t_shell *holder, char **env)
 		if (pid == 0)
 		{
 			if (execve(holder->vcmd, holder->args, env) == -1)
-				get_error(executable, 1);
+				get_error("execve", 1);
 		}
 		else
 		{
 			if (waitpid(pid, &holder->status, 0) == -1)
 				get_error("waitpid", 1);
+			if (WIFEXITED(holder->status))
+				holder->status = WEXITSTATUS(holder->status);
 		}
 	}
 	else
@@ -145,7 +147,7 @@ int main(int argc, char **argv, char **env)
 			free_array(holder.args);
 			continue;
 		}
-		run(argv[0], &holder, env);
+		run(&holder, env);
 		free_array(holder.args);
 		free(holder.vcmd);
 	}
