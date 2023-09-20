@@ -77,7 +77,6 @@ char **prompt(t_env **my_env, int status)
 
 /**
  * run - execute the command
- * @executable: name of the program
  * @holder: struct
  * @env: env
  * Return: Nothing
